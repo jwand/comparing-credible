@@ -1,0 +1,25 @@
+replication code for:
+ 
+  Credible Comparisons Using Interpersonally Incomparable Data: Nonparametric Scales with Anchoring Vignettes
+  Jonathan Wand
+  American Journal of Political Science, 57(1), 249--262 
+
+
+source Dropbox/xchg/papers/ajps.anchors/R
+
+  -rw-r--r--   1 wand  staff    724 Feb 18  2012 .Rhistory
+  -rw-r--r--   1 wand  staff    106 Feb 17  2012 README
+  -rw-r--r--   1 wand  staff   3033 Feb 17  2012 anes.R
+  -rw-r--r--   1 wand  staff  29479 Feb 17  2012 anes.csv
+  -rw-r--r--   1 wand  staff    599 Feb 18  2012 embedCM.R
+  -rw-r--r--   1 wand  staff   2928 Feb 18  2012 mex.R
+  -rw-r--r--   1 wand  staff  10997 Feb 18  2012 mex.Rout
+  -rw-r--r--   1 wand  staff   8945 Feb 17  2012 mexchn_C5.pdf
+  -rw-r--r--   1 wand  staff   9670 Feb 18  2012 mexchn_C5orig.pdf
+  -rw-r--r--   1 wand  staff  10946 Feb 18  2012 mexchn_xsay5.pdf
+  -rw-r--r--   1 wand  staff  10950 Feb 18  2012 mexchn_xsayself.pdf
+  -rw-r--r--   1 wand  staff   4096 Feb 17  2012 services4.R
+
+from 
+  xchg/choice/anchors/R/applications/mexchn/B:
+  data/surveys/anes/nes04/R:
