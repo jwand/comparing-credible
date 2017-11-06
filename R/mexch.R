@@ -1,6 +1,14 @@
-## replicating figures in ajps article
+## replication code for:
+## 
+##  Credible Comparisons Using Interpersonally Incomparable Data: Nonparametric Scales with Anchoring Vignettes
+##  Jonathan Wand
+##  American Journal of Political Science, 57(1), 249--262 
+
 library(anchors)
 data(mexchn)
+
+## embedFont only needed for figs for article
+embedFont <- FALSE
 
 
 tmp <- subset(mexchn, select=c(xsay1,xsay2,xsay3,xsay4,xsay5))
@@ -11,7 +19,7 @@ dim(mexchn.del)
 
 
 ### figures 1(a) and 1(B)
-source("embedCM.R")
+if (embedFont) source("z_embed_fonts.R")
 fname <- "mexchn_xsayself.pdf"
 pdf(fname,height=3,width=3.5)
 par(cex.lab=1,cex=.75,mar=c(2,4,1,.5)) # par(cex.lab=1,cex=1.2,mar=c(4,4,1,4))
@@ -34,7 +42,7 @@ y <- zc[1]
 #arrows( x,  y+.05 , x, y+.01,length=.1)
 text( x-.05, y+.07, "China", srt=90)
 dev.off();
-embedCM(fname)
+if (embedFont) embedCM(fname)
 
 fname <- "mexchn_xsay5.pdf"
 pdf(fname,height=3,width=3.5)
@@ -58,7 +66,7 @@ y <- zc[1]
 text( x-.05, y+.07, "China", srt=90)
 
 dev.off();
-embedCM(fname)
+if (embedFont) embedCM(fname)
 
 
 ## Figure 6:
@@ -92,7 +100,7 @@ y <- zc$uniform[1]
 text( x-.1, y+.05, "China", srt=90)
 
 dev.off()
-embedCM(fname)
+if (embedFont) embedCM(fname)
 
 ## TABLE 2:
 a1c <- anchors(xsayself ~ xsay5 ,method="B",

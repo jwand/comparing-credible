@@ -1,8 +1,5 @@
 library(anchors)
 library(foreign)
-#load("../data/nes88.Rdata")
-#anes <- nes88
-#rm(nes88)
 
 anes <- as.data.frame(read.csv("../data/nes04dat.txt",quote=""))
 dim(anes)

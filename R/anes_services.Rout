@@ -1,0 +1,134 @@
+
+R version 3.3.0 (2016-05-03) -- "Supposedly Educational"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## SOURCE: data/surveys/anes/nes04/R/services4.R
+> ##
+> ## replication code for:
+> ## 
+> ##  Credible Comparisons Using Interpersonally Incomparable Data: Nonparametric Scales with Anchoring Vignettes
+> ##  Jonathan Wand
+> ##  American Journal of Political Science, 57(1), 249--262 
+> 
+> library(anchors)
+Loading required package: rgenoud
+##  rgenoud (Version 5.8-1.0, Build Date: 2017-10-10)
+##  See http://sekhon.berkeley.edu/rgenoud for additional documentation.
+##  Please cite software as:
+##   Walter Mebane, Jr. and Jasjeet S. Sekhon. 2011.
+##   ``Genetic Optimization Using Derivatives: The rgenoud package for R.''
+##   Journal of Statistical Software, 42(11): 1-26. 
+##
+
+Loading required package: MASS
+
+##  anchors (Version 3.0-8, Build Date: 2014-02-24)
+##  See http://wand.stanford.edu/anchors for additional documentation and support.
+
+
+> library(foreign)
+> 
+> anes4 <- read.csv("anes.csv")
+> 
+> xtabs( ~ x + y , data=anes4)
+           y
+x             1   2   3   4   5
+  a.A,1-2   124   0   0   0   0
+  b.{A,1},2   0 128   0   0   0
+  c.1,A,2     0   0 208   0   0
+  d.1,{2,A}   0   0   0  77   0
+  e.1-2,A     0   0   0   0 123
+> 
+> ## GOOD:
+> ## note: return to original order for posslf (7=more service)
+> ## counts by xtab:
+> (tb <- xtabs( ~ posslf + x, data=anes4, subset=!is.na(vote2) & x != "",drop=TRUE))
+      x
+posslf a.A,1-2 b.{A,1},2 c.1,A,2 d.1,{2,A} e.1-2,A
+     1      55        21       0         0       0
+     2      39        36       9         0       0
+     3      17        51      64         9       1
+     4       4        13      88        27      14
+     5       1         0      26        23      39
+     6       0         0       6        12      34
+     7       0         0       0         3      29
+> # N=776
+> sum(tb)
+[1] 621
+> 
+> ## reject no association
+> chisq.test(tb,sim=TRUE,B=10000)
+
+	Pearson's Chi-squared test with simulated p-value (based on 10000
+	replicates)
+
+data:  tb
+X-squared = 680.24, df = NA, p-value = 9.999e-05
+
+> 
+> ## look at missing: missordering
+> ## N=98 missording
+> sum(ix <- anes4$y!=1 & anes4$x=="" & !is.na(anes4$posrep) & !is.na(anes4$posdem))
+[1] 0
+> as.matrix(table(paste( anes4$posslf, anes4$posdem, anes4$posrep)[ix]))
+     [,1]
+> sum(ix <- is.na(anes4$posrep) & is.na(anes4$posdem))
+[1] 0
+> 
+> ## vote percents by xtabs
+> tb
+      x
+posslf a.A,1-2 b.{A,1},2 c.1,A,2 d.1,{2,A} e.1-2,A
+     1      55        21       0         0       0
+     2      39        36       9         0       0
+     3      17        51      64         9       1
+     4       4        13      88        27      14
+     5       1         0      26        23      39
+     6       0         0       6        12      34
+     7       0         0       0         3      29
+> (tc <-  xtabs(vote2 ~ I(posslf) + x, data=anes4, subset=!is.na(vote2) & x != ""))
+         x
+I(posslf) a.A,1-2 b.{A,1},2 c.1,A,2 d.1,{2,A} e.1-2,A
+        1      52        18       0         0       0
+        2      37        34       7         0       0
+        3      14        46      46         4       0
+        4       4        11      50         6       1
+        5       1         0      12         2       5
+        6       0         0       3         0       2
+        7       0         0       0         0       1
+> round(tc/tb,2)
+         x
+I(posslf) a.A,1-2 b.{A,1},2 c.1,A,2 d.1,{2,A} e.1-2,A
+        1    0.95      0.86                          
+        2    0.95      0.94    0.78                  
+        3    0.82      0.90    0.72      0.44    0.00
+        4    1.00      0.85    0.57      0.22    0.07
+        5    1.00              0.46      0.09    0.13
+        6                      0.50      0.00    0.06
+        7                                0.00    0.03
+> 
+> 
+> 
+> ####################################################################
+> ## test row v column homog
+> ####################################################################
+> ## column 1:
+> (a <- cbind(tb[1:5,1,1], tb[1:5,1,2] ))
+Error in `[.default`(tb, 1:5, 1, 1) : incorrect number of dimensions
+Calls: cbind -> [ -> [.table -> NextMethod
+Execution halted

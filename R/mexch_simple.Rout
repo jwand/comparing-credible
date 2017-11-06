@@ -1,0 +1,392 @@
+
+R version 3.3.0 (2016-05-03) -- "Supposedly Educational"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## replication code for:
+> ## 
+> ##  Credible Comparisons Using Interpersonally Incomparable Data: Nonparametric Scales with Anchoring Vignettes
+> ##  Jonathan Wand
+> ##  American Journal of Political Science, 57(1), 249--262 
+> 
+> library(anchors)
+Loading required package: rgenoud
+##  rgenoud (Version 5.8-1.0, Build Date: 2017-10-10)
+##  See http://sekhon.berkeley.edu/rgenoud for additional documentation.
+##  Please cite software as:
+##   Walter Mebane, Jr. and Jasjeet S. Sekhon. 2011.
+##   ``Genetic Optimization Using Derivatives: The rgenoud package for R.''
+##   Journal of Statistical Software, 42(11): 1-26. 
+##
+
+Loading required package: MASS
+
+##  anchors (Version 3.0-8, Build Date: 2014-02-24)
+##  See http://wand.stanford.edu/anchors for additional documentation and support.
+
+
+> data(mexchn)
+> 
+> ## embedFont only needed for figs for article
+> embedFont <- FALSE
+> 
+> 
+> tmp <- subset(mexchn, select=c(xsay1,xsay2,xsay3,xsay4,xsay5))
+> idx <- apply(tmp,1, function(x) all(x==0))
+> sum(idx)
+[1] 130
+> mexchn.del <- subset(mexchn, subset=xsayself>0 & !idx)
+> dim(mexchn.del)
+[1] 788  11
+> 
+> 
+> ### figures 1(a) and 1(B)
+> if (embedFont) source("z_embed_fonts.R")
+> fname <- "mexchn_xsayself.pdf"
+> pdf(fname,height=3,width=3.5)
+> par(cex.lab=1,cex=.75,mar=c(2,4,1,.5)) # par(cex.lab=1,cex=1.2,mar=c(4,4,1,4))
+> if (embedFont) par(family="CM")
+> ## basic histograms
+> (tb <- xtabs( ~ china + xsayself, data=mexchn.del))
+     xsayself
+china   1   2   3   4   5
+    0 257 145  55  12  30
+    1  71  66  78  44  30
+> tp <- tb / apply(tb,1,sum)
+> b <- barplot(tp, beside=TRUE, col=c("black","red"),ylim=c(0,.7),
++         ylab="Proportion",
++         names.arg=c("No say","Little","Some","Lot","Unlimited"),cex.names=1.1,cex.axis=1.1)
+> 
+> zm <- tp[1,]
+> zc <- tp[2,]
+> x <-b[1,1]
+> y <- zm[1]
+> #arrows( x, y+.05, x, y+.01,length=.1)
+> text( x-.05, y+.07, "Mexico", srt=90)
+> x <-b[2,1] 
+> y <- zc[1]
+> #arrows( x,  y+.05 , x, y+.01,length=.1)
+> text( x-.05, y+.07, "China", srt=90)
+> dev.off();
+null device 
+          1 
+> if (embedFont) embedCM(fname)
+> 
+> fname <- "mexchn_xsay5.pdf"
+> pdf(fname,height=3,width=3.5)
+> par(cex.lab=1,cex=.75,mar=c(2,4,1,.5)) # par(cex.lab=1,cex=1.2,mar=c(4,4,1,4))
+> if (embedFont) par(family="CM")
+> (tb <- xtabs( ~ china + xsay5, data=mexchn.del, subset=xsay5>0))
+     xsay5
+china   1   2   3   4   5
+    0 287 130  27  15  40
+    1  23  40  91  43  90
+> tp <- tb / apply(tb,1,sum)
+> b <- barplot(tp, beside=TRUE, col=c("black","red"),ylim=c(0,.7),
++         ylab="Proportion",
++         names.arg=c("No say","Little","Some","Lot","Unlimited"),cex.names=1.1,cex.axis=1.1)
+> 
+> zm <- tp[1,]
+> zc <- tp[2,]
+> x <-b[1,1]
+> y <- zm[1]
+> #arrows( x, y+.05, x, y+.01,length=.1)
+> text( x-.05, y+.07, "Mexico", srt=90)
+> x <-b[2,1] 
+> y <- zc[1]
+> #arrows( x,  y+.05 , x, y+.01,length=.1)
+> text( x-.05, y+.07, "China", srt=90)
+> 
+> dev.off();
+null device 
+          1 
+> if (embedFont) embedCM(fname)
+> 
+> 
+> ## Figure 6:
+> 
+> fname <- "mexchn_C5orig.pdf"
+> 
+> #pdf(fname,height=4,width=8)
+> pdf(fname,height=3,width=6.5)
+> par(cex.lab=1,cex=.75,mar=c(2,4,.5,.5)) # par(cex.lab=1,cex=1.2,mar=c(4,4,1,4))
+> if (embedFont) par(family="CM")
+>                                         #par(cex.lab=1,cex=1.2,mar=c(4,4,0,0))
+> 
+> a1c <- anchors(xsayself ~ xsay5 + xsay4 + xsay3 + xsay2 + xsay1,method="C",
++                data = subset(mexchn,subset=china==1))
+
+There is at least one missing category: 5 
+
+> a1m <- anchors(xsayself ~ xsay5 + xsay4 + xsay3 + xsay2 + xsay1,method="C",
++                data = subset(mexchn,subset=china==0))
+> zm <- summary(a1m)
+
+ANCHORS: SUMMARY OF RELATIVE RANK ANALYSIS:
+
+Overview of C-ranks
+
+Number of cases: 355 with interval value, 141 with scalar value
+
+Maximum possible C-rank value: 11
+
+Interval on C-scale: Frequency and proportions Cs to Ce
+          N  Prop MinEnt
+ 1 to  1 46 0.093      1
+ 2 to  2 38 0.077      2
+ 3 to  3  2 0.004      3
+ 4 to  4  3 0.006      4
+ 5 to  5  2 0.004      5
+ 6 to  6  8 0.016      6
+ 7 to  7  9 0.018      7
+ 8 to  8  1 0.002      8
+ 9 to  9  1 0.002      9
+10 to 10 10 0.020     10
+11 to 11 21 0.042     11
+ 1 to  4 16 0.032      4
+ 1 to  6 18 0.036      4
+ 1 to  8 12 0.024      4
+ 1 to 10 28 0.056      4
+ 1 to 11  3 0.006      4
+ 2 to  4 28 0.056      4
+ 2 to  5  4 0.008      4
+ 2 to  6 56 0.113      4
+ 2 to  7  2 0.004      4
+ 2 to  8 23 0.046      4
+ 2 to  9  2 0.004      4
+ 2 to 10 63 0.127      4
+ 2 to 11  9 0.018      4
+ 3 to  6  2 0.004      4
+ 3 to  7  1 0.002      4
+ 3 to  8  5 0.010      4
+ 3 to 10  4 0.008      4
+ 3 to 11  1 0.002      4
+ 4 to  6  9 0.018      4
+ 4 to  7  3 0.006      4
+ 4 to  8  3 0.006      4
+ 4 to 10  7 0.014      4
+ 4 to 11  6 0.012      4
+ 5 to  8  6 0.012      8
+ 5 to 10  5 0.010      8
+ 6 to  8  5 0.010      8
+ 6 to  9  2 0.004      8
+ 6 to 10 10 0.020      8
+ 6 to 11 10 0.020      8
+ 7 to 10  2 0.004      8
+ 7 to 11  1 0.002      8
+ 8 to 10  6 0.012      8
+ 8 to 11  3 0.006      8
+
+Note: MinEnt is the rank for the interval that minimizes entropy
+
+Summary of C-ranks with ties/intervals broken:
+
+Distribution of ranks omiting interval cases
+     1    2     3     4     5     6     7     8     9    10    11
+ 0.326 0.27 0.014 0.021 0.014 0.057 0.064 0.007 0.007 0.071 0.149
+
+Distribution of ranks allocating interval cases uniformly
+     1     2     3     4     5     6     7     8     9    10    11
+ 0.116 0.167 0.099 0.113 0.089 0.111 0.079 0.065 0.046 0.063 0.052
+
+Distribution of ranks allocating interval cases via cpolr
+and conditioning on observed ranks
+    1     2     3     4     5     6     7     8     9    10    11 
+0.115 0.311 0.021 0.098 0.021 0.241 0.061 0.016 0.006 0.060 0.050 
+
+Allocating cases to their MinEnt values produces
+    1     2     3     4     5     6     7     8     9    10    11 
+0.093 0.077 0.004 0.621 0.004 0.016 0.018 0.103 0.002 0.020 0.042 
+> zc <- summary(a1c)
+
+ANCHORS: SUMMARY OF RELATIVE RANK ANALYSIS:
+
+Overview of C-ranks
+
+Number of cases: 140 with interval value, 139 with scalar value
+
+Maximum possible C-rank value: 11
+
+Interval on C-scale: Frequency and proportions Cs to Ce
+           N  Prop MinEnt
+ 1 to  1 105 0.376      1
+ 2 to  2  13 0.047      2
+ 3 to  3   3 0.011      3
+ 4 to  4   2 0.007      4
+ 5 to  5   0 0.000      5
+ 6 to  6   1 0.004      6
+ 7 to  7   2 0.007      7
+ 8 to  8   1 0.004      8
+ 9 to  9   2 0.007      9
+10 to 10   2 0.007     10
+11 to 11   8 0.029     11
+ 1 to  4   8 0.029      1
+ 1 to  5   2 0.007      1
+ 1 to  6  15 0.054      1
+ 1 to  7   1 0.004      1
+ 1 to  8  13 0.047      1
+ 1 to  9   3 0.011      1
+ 1 to 10   5 0.018      1
+ 1 to 11   4 0.014      1
+ 2 to  4   7 0.025      4
+ 2 to  6  13 0.047      4
+ 2 to  7   2 0.007      4
+ 2 to  8   6 0.022      4
+ 2 to  9   2 0.007      4
+ 2 to 10  21 0.075      4
+ 2 to 11   9 0.032      4
+ 3 to 11   1 0.004      4
+ 4 to  6   3 0.011      4
+ 4 to  7   1 0.004      4
+ 4 to  8   5 0.018      4
+ 4 to  9   1 0.004      4
+ 4 to 10   3 0.011      4
+ 4 to 11   2 0.007      4
+ 6 to  8   1 0.004      8
+ 6 to 10   3 0.011      8
+ 6 to 11   2 0.007      8
+ 8 to 10   6 0.022      8
+ 8 to 11   1 0.004      8
+
+Note: MinEnt is the rank for the interval that minimizes entropy
+
+Summary of C-ranks with ties/intervals broken:
+
+Distribution of ranks omiting interval cases
+     1     2     3     4 5     6     7     8     9    10    11
+ 0.755 0.094 0.022 0.014 0 0.007 0.014 0.007 0.014 0.014 0.058
+
+Distribution of ranks allocating interval cases uniformly
+     1     2     3     4     5     6     7     8     9    10    11
+ 0.405 0.109 0.074 0.081 0.059 0.065 0.047 0.049 0.039 0.036 0.037
+
+Distribution of ranks allocating interval cases via cpolr
+and conditioning on observed ranks
+    1     2     3     4     5     6     7     8     9    10    11 
+0.475 0.159 0.038 0.119 0.000 0.060 0.023 0.044 0.025 0.022 0.035 
+
+Allocating cases to their MinEnt values produces
+    1     2     3     4     5     6     7     8     9    10    11 
+0.559 0.047 0.011 0.280 0.000 0.004 0.007 0.050 0.007 0.007 0.029 
+> b <- barplot(rbind(zm$uniform,
++               zc$uniform),
++         beside=TRUE, ylim=c(0,.55), col=c("black","red"),
++         ylab="Proportion",xlab="C",
++         names.arg=c(1:11))
+> x <-b[1,1] -.05
+> y <- zm$uniform[1]
+> #arrows( x, y+.05, x, y+.01,length=.1)
+> text( x-.1, y+.06, "Mexico", srt=90)
+> x <-b[2,1] -.05
+> y <- zc$uniform[1]
+> #arrows( x,  y+.05 , x, y+.01,length=.1)
+> text( x-.1, y+.05, "China", srt=90)
+> 
+> dev.off()
+null device 
+          1 
+> if (embedFont) embedCM(fname)
+> 
+> ## TABLE 2:
+> a1c <- anchors(xsayself ~ xsay5 ,method="B",
++                data = subset(mexchn,subset=china==1))
+Warning message:
+In cpolr(fo, data = fdata, method = options$cpolr.method, debug = options$debug) :
+  cpolr response must have 3 or more levels, skipping.
+
+> summary(a1c)
+
+ANCHORS: SUMMARY OF RELATIVE RANK ANALYSIS:
+
+Overview of B-ranks
+
+Number of cases: 73 with interval value, 214 with scalar value
+
+Maximum possible B-rank value: 2
+
+Interval on B-scale: Frequency and proportions Bs to Be
+           N  Prop MinEnt
+ 1 to  1 160 0.557      1
+ 2 to  2  54 0.188      2
+ 1 to  2  73 0.254      1
+
+Note: MinEnt is the rank for the interval that minimizes entropy
+
+Summary of B-ranks with ties/intervals broken:
+
+Distribution of ranks omiting interval cases
+     1     2
+ 0.748 0.252
+
+Distribution of ranks allocating interval cases uniformly
+     1     2
+ 0.685 0.315
+
+There is no cpolr model included in anchors.rank object
+Either cpolr was not requested when the ranks were calculated
+[ see 'anchors.options(rank.extras)' ],
+or there were not enough different ranks (<=2) to estimate the cpolr model
+
+Allocating cases to their MinEnt values produces
+    1     2 
+0.812 0.188 
+> a1m <- anchors(xsayself ~ xsay5 ,method="B",
++                data = subset(mexchn,subset=china==0))
+Warning message:
+In cpolr(fo, data = fdata, method = options$cpolr.method, debug = options$debug) :
+  cpolr response must have 3 or more levels, skipping.
+
+> summary(a1m)
+
+ANCHORS: SUMMARY OF RELATIVE RANK ANALYSIS:
+
+Overview of B-ranks
+
+Number of cases: 226 with interval value, 273 with scalar value
+
+Maximum possible B-rank value: 2
+
+Interval on B-scale: Frequency and proportions Bs to Be
+           N  Prop MinEnt
+ 1 to  1 124 0.248      1
+ 2 to  2 149 0.299      2
+ 1 to  2 226 0.453      2
+
+Note: MinEnt is the rank for the interval that minimizes entropy
+
+Summary of B-ranks with ties/intervals broken:
+
+Distribution of ranks omiting interval cases
+     1     2
+ 0.454 0.546
+
+Distribution of ranks allocating interval cases uniformly
+     1     2
+ 0.475 0.525
+
+There is no cpolr model included in anchors.rank object
+Either cpolr was not requested when the ranks were calculated
+[ see 'anchors.options(rank.extras)' ],
+or there were not enough different ranks (<=2) to estimate the cpolr model
+
+Allocating cases to their MinEnt values produces
+    1     2 
+0.248 0.752 
+> 
+> proc.time()
+   user  system elapsed 
+  0.504   0.116   0.625 
